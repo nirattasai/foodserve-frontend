@@ -2,35 +2,28 @@ import axios from "axios";
 
 const auth_key = "foodserve-auth";
 let auth = JSON.parse(localStorage.getItem(auth_key));
-const user = auth ? auth.user : "";
-const token = auth ? auth.access_token : "";
 
 const api_endpoint = process.env.VUE_APP_API_URL || "http://localhost:8000";
 
 export default {
   getApiHeader() {
-    if (this.token !== undefined && this.token !== "") {
-      return {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      };
-    } else {
-      this.token = JSON.parse(localStorage.getItem(auth_key)).token;
-      return {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      };
-    }
+    let token = JSON.parse(localStorage.getItem(auth_key)).access_token;
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
   },
 
   getUser() {
-    return user;
+    if (auth == null){
+      return null;
+    }
+    return auth.user;
   },
 
   gettoken() {
-    return token;
+    return JSON.parse(localStorage.getItem(auth_key)).access_token;
   },
 
   async login({ username, password }) {
@@ -46,5 +39,20 @@ export default {
 
   logout() {
     localStorage.removeItem(auth_key);
+  },
+
+  async register({username, password, firstName, lastName, idNumber, telephoneNumber, email}){
+    let url = `${api_endpoint}/create-user`;
+    let body = {
+      username: username,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+      idNumber: idNumber,
+      telephoneNumber: telephoneNumber,
+      email: email,
+    };
+    let res = await axios.post(url, body);
+    return res;
   },
 };
