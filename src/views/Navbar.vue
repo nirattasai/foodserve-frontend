@@ -71,7 +71,7 @@
           <div class="mx-8 hover:text-red-900 thai-text" v-on:click="toMenu">
             จัดการเมนู
           </div>
-          <div class="mx-8 hover:text-red-900 thai-text">ตรวจสอบออร์เดอร์</div>
+          <div class="mx-8 hover:text-red-900 thai-text" v-on:click="toOrder">ตรวจสอบออร์เดอร์</div>
           <div class="mx-8 hover:text-red-900 thai-text">ตรวจสอบโต๊ะ</div>
           <div class="mx-8 hover:text-red-900 thai-text">สรุป</div>
         </div>
@@ -91,8 +91,8 @@ export default {
   },
   components: {},
   methods: {
-    async logout() {
-      await AuthService.logout();
+    logout() {
+      AuthService.logout();
       if (!AuthService.getUser()) {
         this.$router.push("/login");
       }
@@ -102,6 +102,9 @@ export default {
     },
     toMenu() {
       this.$router.push({ name: "menuManage" });
+    },
+    toOrder() {
+      this.$router.push({ name: "orderManage" });
     },
   },
 };

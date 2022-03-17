@@ -5,6 +5,7 @@ import Navbar from "@/views/Navbar.vue";
 import Register from "@/views/Register.vue";
 import MechantManage from "@/views/merchant/MerchantManage.vue";
 import MenuManage from "@/views/merchant/MenuManage.vue";
+import OrderManage from "@/views/merchant/OrderManage.vue";
 
 Vue.use(VueRouter);
 
@@ -28,6 +29,11 @@ const routes = [
         path: "menu",
         name: "menuManage",
         component: MenuManage,
+      },
+      {
+        path: "order",
+        name: "orderManage",
+        component: OrderManage,
       },
     ],
   },
