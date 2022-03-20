@@ -71,8 +71,15 @@
           <div class="mx-8 hover:text-red-900 thai-text" v-on:click="toMenu">
             จัดการเมนู
           </div>
-          <div class="mx-8 hover:text-red-900 thai-text" v-on:click="toOrder">ตรวจสอบออร์เดอร์</div>
-          <div class="mx-8 hover:text-red-900 thai-text">ตรวจสอบโต๊ะ</div>
+          <div class="mx-8 hover:text-red-900 thai-text" v-on:click="toOrder">
+            ตรวจสอบออร์เดอร์
+          </div>
+          <div class="mx-8 hover:text-red-900 thai-text" v-on:click="toTable">
+            ตรวจสอบโต๊ะ
+          </div>
+          <div class="mx-8 hover:text-red-900 thai-text" v-on:click="toBills">
+            ตรวจสอบการชำระเงิน
+          </div>
           <div class="mx-8 hover:text-red-900 thai-text">สรุป</div>
         </div>
       </nav>
@@ -105,6 +112,12 @@ export default {
     },
     toOrder() {
       this.$router.push({ name: "orderManage" });
+    },
+    toTable() {
+      this.$router.push({ name: "tableManage" });
+    },
+    toBills() {
+      this.$router.push({ name: "billManage" });
     },
   },
 };

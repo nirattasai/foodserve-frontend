@@ -25,6 +25,14 @@ export default {
     return res.data.merchant;
   },
 
+  async getTables() {
+    let url = `${api_endpoint}/merchant-table`;
+    let header = AuthService.getApiHeader();
+    let body = {};
+    let res = await axios.post(url, body, header);
+    return res.data.tables;
+  },
+
   async getCatagories() {
     let url = `${api_endpoint}/merchant-catagories`;
     let header = AuthService.getApiHeader();

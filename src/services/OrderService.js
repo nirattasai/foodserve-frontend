@@ -32,4 +32,23 @@ export default {
     let res = await axios.post(url, body, header);
     return res.data.menus;
   },
+
+  async getBills() {
+    let url = `${api_endpoint}/get-bills`;
+    let header = AuthService.getApiHeader();
+    let body = {};
+    let res = await axios.post(url, body, header);
+    return res.data.bills;
+  },
+
+  async updateStatusBill({billId, status}) {
+    let url = `${api_endpoint}/update-bill`;
+    let header = AuthService.getApiHeader();
+    let body = {
+      billId: billId,
+      status: status,
+    };
+    let res = await axios.post(url, body, header);
+    return res.data.bill;
+  },
 };
