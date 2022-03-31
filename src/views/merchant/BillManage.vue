@@ -305,9 +305,6 @@ export default {
     closeSlip() {
       this.toggleSlip = "display: none;";
     },
-    openBillDetail(bill) {
-      console.log(bill);
-    },
     async editBill() {
       let res = OrderService.updateStatusBill(this.updateBill);
       this.closeBillEdit();
