@@ -9,6 +9,12 @@ import OrderManage from "@/views/merchant/OrderManage.vue";
 import TableManage from "@/views/merchant/TableManage.vue";
 import BillManage from "@/views/merchant/BillManage.vue";
 import SelectMenu from "@/views/customer/SelectMenu.vue";
+import ConfirmOrder from "@/views/customer/ConfirmOrder.vue";
+import MyOrder from "@/views/customer/MyOrder.vue";
+import PayBill from "@/views/customer/PaymentBill.vue";
+import Thankyou from "@/views/customer/Thankyou.vue";
+import Dashboard from "@/views/merchant/Dashboard.vue";
+import UploadSlip from "@/views/customer/UploadSlip.vue";
 
 Vue.use(VueRouter);
 
@@ -22,6 +28,33 @@ const routes = [
     path: "/table/:tableId",
     name: "selectMenu",
     component: SelectMenu,
+  },
+  {
+    path: "/table/:tableId/confirm",
+    name: "confirmOrder",
+    component: ConfirmOrder,
+  },
+  {
+    path: "/table/:tableId/my",
+    name: "myOrder",
+    component: MyOrder,
+  },
+  {
+    path: "/table/:tableId/pay",
+    name: "payBill",
+    component: PayBill,
+    props: true,
+  },
+  {
+    path: "/table/:tableId/upload",
+    name: "uploadSlip",
+    component: UploadSlip,
+    props: true,
+  },
+  {
+    path: "/thankyou",
+    name: "thankyou",
+    component: Thankyou,
   },
   {
     path: "/merchant",
@@ -52,6 +85,11 @@ const routes = [
         path: "bills",
         name: "billManage",
         component: BillManage,
+      },
+      {
+        path: "dashboard",
+        name: "dashboard",
+        component: Dashboard,
       },
     ],
   },

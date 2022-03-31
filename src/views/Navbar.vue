@@ -80,7 +80,12 @@
           <div class="mx-8 hover:text-red-900 thai-text" v-on:click="toBills">
             ตรวจสอบการชำระเงิน
           </div>
-          <div class="mx-8 hover:text-red-900 thai-text">สรุป</div>
+          <div
+            class="mx-8 hover:text-red-900 thai-text"
+            v-on:click="toDashboard"
+          >
+            สรุป
+          </div>
         </div>
       </nav>
     </div>
@@ -100,9 +105,7 @@ export default {
   methods: {
     logout() {
       AuthService.logout();
-      if (!AuthService.getUser()) {
-        this.$router.push("/login");
-      }
+      this.$router.push("/login");
     },
     toManage() {
       this.$router.push({ name: "merchantManage" });
@@ -118,6 +121,9 @@ export default {
     },
     toBills() {
       this.$router.push({ name: "billManage" });
+    },
+    toDashboard() {
+      this.$router.push({ name: "dashboard" });
     },
   },
 };

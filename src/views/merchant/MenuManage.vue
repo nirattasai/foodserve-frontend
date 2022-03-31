@@ -225,7 +225,11 @@
                 type="file"
                 accept="image/*"
               />
-              <img :src="inputCreateMenu.image" style="height: 200px" class="mx-auto mt-3"/>
+              <img
+                :src="inputCreateMenu.image"
+                style="height: 200px"
+                class="mx-auto mt-3"
+              />
             </div>
             <button
               class="w-48 py-3 rounded-xl text-grey shadow-xl hover:shadow-inner focus:outline-none transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105 thai-text mt-3 mb-6"
@@ -341,7 +345,11 @@
                 class="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
                 >รูปภาพ</label
               >
-              <img :src="this.menu.image" style="height: 200px" class="mx-auto"/>
+              <img
+                :src="this.menu.image"
+                style="height: 200px"
+                class="mx-auto"
+              />
             </div>
           </div>
         </div>
@@ -442,7 +450,11 @@
                 type="file"
                 accept="image/*"
               />
-              <img :src="inputEditMenu.image" style="height: 200px" class="mt-3 mx-auto"/>
+              <img
+                :src="inputEditMenu.image"
+                style="height: 200px"
+                class="mt-3 mx-auto"
+              />
             </div>
             <button
               class="w-48 py-3 rounded-xl text-grey shadow-xl hover:shadow-inner focus:outline-none transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105 thai-text mt-3 mb-6"
@@ -475,7 +487,7 @@
                   <tr class="border-b border-gray-200 hover:bg-gray-100">
                     <td
                       class="py-3 px-6 text-left whitespace-nowrap lg:w-4/6"
-                      v-on:click="filterMenusWithCatagoryId(catagory.id)"
+                      v-on:click="filterMenusWithCatagoryId(catagory)"
                     >
                       <div class="flex items-center">
                         <div class="mr-2"></div>
@@ -539,6 +551,9 @@
         </div>
 
         <div class="w-full lg:w-5/6 mr-10">
+          <div class="mx-auto pt-5">
+            เมนูในหมวดหมู่ {{ catagoryShow || `ทั้งหมด` }}
+          </div>
           <div class="bg-white shadow-md rounded my-6">
             <table class="min-w-max w-full table-auto">
               <thead>
@@ -564,10 +579,7 @@
                     <td class="py-3 px-6 text-left">
                       <div class="flex items-center">
                         <div class="mr-2">
-                          <img
-                            class="w-6 h-6 rounded-full"
-                            src="https://randomuser.me/api/portraits/men/1.jpg"
-                          />
+                          <img class="w-6 h-6 rounded-full" :src="menu.image" />
                         </div>
                         <span>{{ menu.detail }}</span>
                       </div>
@@ -714,6 +726,7 @@ export default {
         status: "",
         image: "",
       },
+      catagoryShow: undefined,
     };
   },
   async created() {
@@ -747,8 +760,9 @@ export default {
       reader.readAsDataURL(selectedImage);
     },
 
-    async filterMenusWithCatagoryId(catagoryId) {
-      this.menus = await MerchantService.getMenuWithCatagoryId(catagoryId);
+    async filterMenusWithCatagoryId(catagory) {
+      this.menus = await MerchantService.getMenuWithCatagoryId(catagory.id);
+      this.catagoryShow = catagory.name;
     },
 
     async createCatagory() {
@@ -770,6 +784,7 @@ export default {
 
     openCreateCatagoryModal() {
       this.toggleCreateModalCatagory = "display: block;";
+      this.inputCatagory.name = "";
     },
 
     closeCreateCatagoryModal() {
@@ -791,6 +806,12 @@ export default {
 
     openCreateMenuModal() {
       this.toggleCreateModalMenu = "display: block;";
+      this.inputCreateMenu.name = "";
+      this.inputCreateMenu.detail = "";
+      this.inputCreateMenu.price = 0.0;
+      this.inputCreateMenu.status = "";
+      this.inputCreateMenu.image = "";
+      this.inputCreateMenu.catagoryId = "";
     },
 
     closeCreateMenuModal() {

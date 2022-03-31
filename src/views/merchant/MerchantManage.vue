@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- This is an example component -->
-    <div class="max-w-xl mx-auto">
+    <div class="max-w-xl mx-auto mb-10">
       <div class="relative z-0 mb-6 w-full group">
         <input
           type="text"
@@ -145,6 +145,7 @@ export default {
     async createMerchant() {
       try {
         let res = MerchantService.createMerchant(this.form);
+        this.$router.push({ name: "menuManage" });
       } catch (error) {
         alert("error");
       }

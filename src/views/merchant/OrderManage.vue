@@ -44,6 +44,8 @@
                 <option value="WAITING">รอทำอาหาร</option>
                 <option value="PREPARE">กำลังทำอาหาร</option>
                 <option value="SERVED">เสิร์ฟเเล้ว</option>
+                <option value="PAYMENT">ชำระเงินเเล้ว</option>
+                <option value="CANCELED">ยกเลิก</option>
               </select>
             </div>
             <button
@@ -137,6 +139,15 @@
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required=""
                 readonly
+                v-if="order.status == `CANCELED`"
+                value="ยกเลิก"
+              />
+              <input
+                type="text"
+                name="name"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required=""
+                readonly
                 v-if="order.status == `PREPARE`"
                 value="กำลังเตรียมอาหาร"
               />
@@ -148,6 +159,15 @@
                 readonly
                 v-if="order.status == `WAITING`"
                 value="รอทำอาหาร"
+              />
+              <input
+                type="text"
+                name="name"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required=""
+                readonly
+                v-if="order.status == `PAYMENT`"
+                value="ชำระเงินเเล้ว"
               />
             </div>
             <div>
@@ -228,9 +248,27 @@
     </div>
     <div class="overflow-x-auto">
       <div
-        class="min-w-screen bg-gray-100 flex items-center justify-center bg-gray-100 thai-text overflow-hidden"
+        class="min-w-screen bg-gray-100 flex items-center justify-center bg-gray-100 thai-text overflow-hidden h-full"
       >
         <div class="w-full lg:w-5/6 mr-10">
+          <div class="inline-block mt-10 mr-6">เลือกวันที่ต้องการดู</div>
+          <input
+            type="date"
+            id="date-picker"
+            class="rounded-lg bg-gray-100 inline-block"
+            v-model="dateFilter"
+          />
+          <select
+            v-model="statusFilter"
+            class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+          >
+            <option value="WAITING">รอคิวทำอาหาร</option>
+            <option value="PREPARE">กำลังทำอาหาร</option>
+            <option value="SERVED">เสิร์ฟเเล้ว</option>
+            <option value="PAYMENT">ชำระเงินเเล้ว</option>
+            <option value="CANCELED">ยกเลิก</option>
+            <option value="ALL">ทั้งหมด</option>
+          </select>
           <div class="bg-white shadow-md rounded my-6">
             <table class="min-w-max w-full table-auto">
               <thead>
@@ -270,10 +308,16 @@
                         </div>
                         <span v-if="order.status == `SERVED`">เสิร์ฟเเล้ว</span>
                         <span v-else-if="order.status == `PREPARE`"
-                          >กำลังเตรียมอาหาร</span
+                          >กำลังทำอาหาร</span
                         >
                         <span v-else-if="order.status == `WAITING`"
-                          >รอเตรียมอาหาร</span
+                          >รอคิวทำอาหาร</span
+                        >
+                        <span v-else-if="order.status == `PAYMENT`"
+                          >ชำระเงินเเล้ว</span
+                        >
+                        <span v-else-if="order.status == `CANCELED`"
+                          >ยกเลิก</span
                         >
                       </div>
                     </td>
@@ -372,21 +416,44 @@ export default {
         status: "",
       },
       menus: undefined,
+      dateFilter: "",
+      statusFilter: "WAITING",
+      pollling: null,
     };
   },
   async created() {
     try {
-      this.orders = await OrderService.getOrders();
+      let today = new Date();
+      this.dateFilter =
+        today.getFullYear() +
+        "-" +
+        String(today.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(today.getDate()).padStart(2, "0");
+      this.orders = await OrderService.getOrders(this.dateFilter, "WAITING");
+      this.polllingData(this.dateFilter, this.statusFilter, this.updateData);
     } catch (error) {
       return null;
     }
   },
   components: {},
+  beforeDestroy() {
+    clearInterval(this.pollling);
+  },
   methods: {
+    polllingData(date, status, method) {
+      this.pollling = setInterval(async function () {
+        method(await OrderService.getOrders(date, status));
+      }, 5000);
+    },
+    updateData(data) {
+      this.orders = data;
+    },
     closeOrderEdit() {
       this.toggleOrderEdit = "display: none";
     },
     openOrderEdit(order) {
+      clearInterval(this.pollling);
       this.toggleOrderEdit = "display: block";
       this.updateOrder.status = order.status;
       this.updateOrder.orderId = order.id;
@@ -411,8 +478,30 @@ export default {
 
     async editStatusOrder() {
       let res = await OrderService.editStatusOrder(this.updateOrder);
-      this.orders = await OrderService.getOrders();
+      this.orders = await OrderService.getOrders(
+        this.dateFilter,
+        this.statusFilter
+      );
+      this.polllingData(this.dateFilter, this.statusFilter, this.updateData);
       this.closeOrderEdit();
+    },
+  },
+  watch: {
+    dateFilter: async function () {
+      this.orders = await OrderService.getOrders(
+        this.dateFilter,
+        this.statusFilter
+      );
+      clearInterval(this.pollling);
+      this.polllingData(this.dateFilter, this.statusFilter, this.updateData);
+    },
+    statusFilter: async function () {
+      this.orders = await OrderService.getOrders(
+        this.dateFilter,
+        this.statusFilter
+      );
+      clearInterval(this.pollling);
+      this.polllingData(this.dateFilter, this.statusFilter, this.updateData);
     },
   },
 };

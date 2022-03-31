@@ -53,6 +53,7 @@ export default {
       email: email,
     };
     let res = await axios.post(url, body);
+    localStorage.setItem(auth_key, JSON.stringify(res.data));
     return res;
   },
 };

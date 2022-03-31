@@ -93,7 +93,7 @@ export default {
     async login() {
       let res = await AuthService.login(this.form);
       if (res.error) {
-        console.log("something wrong");
+        alert("something wrong");
       } else {
         this.$router.push({ name: "merchant" });
       }

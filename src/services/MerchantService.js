@@ -129,4 +129,25 @@ export default {
     let res = await axios.post(url, body, header);
     return res;
   },
+
+  async getDashboardDaily(dateFilter) {
+    let url = `${api_endpoint}/dashboard`;
+    let header = AuthService.getApiHeader();
+    let body = {
+      dateFilter: dateFilter,
+    };
+    let res = await axios.post(url, body, header);
+    return res.data;
+  },
+
+  async getDashboardMonthly({ from, to }) {
+    let url = `${api_endpoint}/monthlyReport`;
+    let header = AuthService.getApiHeader();
+    let body = {
+      from: from,
+      to: to,
+    };
+    let res = await axios.post(url, body, header);
+    return res.data;
+  },
 };

@@ -31,7 +31,7 @@
       </div>
       <button
         class="add-to-basket py-3 pl-5"
-        v-on:click="addMenu(menu.id, amount)"
+        v-on:click="addMenu(menu, amount)"
       >
         <div style="float: left;">เพิ่มเมนู</div>
         <div class="inline float-right pr-5">฿{{ menu.price * amount }}</div>
@@ -65,10 +65,10 @@
       </div>
     </div>
     <div style="position: fixed; width: 90%; bottom: 3%; background-color: white;" class="text-center">
-      <button type="button" class="basket py-3" v-on:click="createOrder">
+      <button type="button" class="basket py-3" v-on:click="confirmOrder">
         สั่งออร์เดอร์
       </button>
-      <button class="basket py-3 mt-3">ออร์เดอร์ของฉัน</button>
+      <button class="basket py-3 mt-3" v-on:click="myOrder">ออร์เดอร์ของฉัน</button>
     </div>
   </div>
 </template>
@@ -102,6 +102,7 @@ export default {
       let res = await CustomerService.getPage(this.tableId);
       this.merchant = res.merchant;
       this.catagories = res.catagory;
+      this.filterCatagory = this.catagories[0];
     } catch (error) {
       return null;
     }
@@ -117,19 +118,35 @@ export default {
       this.menu.detail = menu.detail;
       this.toggleMenu = "display: block;";
     },
-    addMenu(menuId, amount) {
+    addMenu(menu, amount) {
+      const newMenuItem = {
+        id: menu.id,
+        name: menu.name,
+        detail: menu.detail,
+        image: menu.image,
+        price: menu.price,
+      };
       this.order.menu.push({
-        menuId: menuId,
+        menu: newMenuItem,
         amount: amount,
       });
       this.toggleMenu = "display: none;";
     },
-    async createOrder() {
+    async confirmOrder() {
       if (this.order.menu.length == 0) {
-        alert("error");
+        alert("คุณยังไม่ได้เลือกเมนู");
       } else {
-        console.log(this.order);
+        localStorage.setItem('order', JSON.stringify(this.order));
+        this.$router.push({
+          name: "confirmOrder",
+          // params: {
+          //   order: this.order,
+          // },
+        });
       }
+    },
+    myOrder() {
+      this.$router.push({ name: "myOrder" });
     },
   },
 };
@@ -137,12 +154,11 @@ export default {
 
 <style scoped>
 #mobile {
-  width: 391px;
+  width: 100%;
   margin-bottom: 150px;
 }
 .menu {
   width: 100%;
-  height: 100px;
 }
 .menu-img {
   margin-top: 10px;
@@ -156,6 +172,7 @@ export default {
   text-align: left;
   width: 50%;
   margin-left: 30%;
+  height: auto;
 }
 
 hr {

@@ -144,7 +144,7 @@ export default {
         try {
           let res = await AuthService.register(this.form);
           if (res.status == 200) {
-            this.$router.push("/merchant");
+            this.$router.push("/login");
           }
         } catch (error) {
           alert("error");
